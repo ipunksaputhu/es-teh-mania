@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Es Teh Mania</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .drink-display {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass {
+            width: 120px;
+            height: 180px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.7) 20%,
+                rgba(255, 255, 255, 0.3) 40%,
+                rgba(255, 255, 255, 0.1) 60%,
+                rgba(255, 255, 255, 0.3) 80%,
+                rgba(255, 255, 255, 0.7) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 0 0 25px 25px;
+            margin: 0 auto 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 20px rgba(255, 255, 255, 0.5),
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 0 0 20px 0;
+            pointer-events: none;
+        }
+
+        .tea-liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(135deg, 
+                #8B4513 0%,
+                #A0522D 30%,
+                #8B4513 60%,
+                #654321 100%);
+            border-radius: 0 0 22px 22px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                inset 0 10px 20px rgba(255, 255, 255, 0.2),
+                inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .tea-liquid::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0.3) 100%);
+            border-radius: 50px;
+            animation: wave 3s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateX(-10px) scaleY(0.8); }
+            50% { transform: translateX(10px) scaleY(1.2); }
+        }
+
+        .ice-cubes {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .ice-cube {
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(230, 245, 255, 0.9) 30%,
+                rgba(200, 230, 255, 0.8) 60%,
+                rgba(255, 255, 255, 0.85) 100%);
+            border: 1px solid rgba(200, 230, 255, 0.6);
+            border-radius: 4px;
+            animation: float 2s ease-in-out infinite;
+            box-shadow: 
+                inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .ice-cube::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .toppings {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3px;
+            max-width: 100px;
+            z-index: 5;
+        }
+
+        .topping {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            animation: bounce 1.5s ease-in-out infinite;
+            position: relative;
+            box-shadow: 
+                inset 2px 2px 4px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+                0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .topping.boba {
+            background: radial-gradient(circle at 30% 30%, 
+                #8B4513 0%,
+                #654321 50%,
+                #3d2914 100%);
+        }
+
+        .topping.jelly {
+            background: radial-gradient(circle at 30% 30%, 
+                #32CD32 0%,
+                #228B22 50%,
+                #006400 100%);
+            border-radius: 4px;
+        }
+
+        .topping.pudding {
+            background: radial-gradient(circle at 30% 30%, 
+                #FFD700 0%,
+                #FFA500 50%,
+                #FF8C00 100%);
+        }
+
+        .topping::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0.9;
+            }
+            25% { 
+                transform: translateY(-8px) rotate(2deg); 
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-5px) rotate(-1deg); 
+                opacity: 0.95;
+            }
+            75% { 
+                transform: translateY(-10px) rotate(1deg); 
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { 
+                transform: translateY(0px) scale(1); 
+                opacity: 0.8;
+            }
+            25% { 
+                transform: translateY(-4px) scale(1.05); 
+                opacity: 0.9;
+            }
+            50% { 
+                transform: translateY(-8px) scale(1.1); 
+                opacity: 1;
+            }
+            75% { 
+                transform: translateY(-2px) scale(1.02); 
+                opacity: 0.95;
+            }
+        }
+
+        .customer-order {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .order-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .order-item {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .control-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn.selected {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .serve-btn {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf) !important;
+        }
+
+        .timer-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.perfect {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+
+        .feedback.good {
+            background: linear-gradient(45deg, #ffd93d, #ff6b6b);
+            color: white;
+        }
+
+        .feedback.wrong {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #FFD700;
+            margin: 20px 0;
+        }
+
+        .play-again-btn {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🧊 Es Teh Mania</h1>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div>Skor</div>
+                <div class="score-value" id="score">0</div>
+            </div>
+            <div class="score-item">
+                <div>Level</div>
+                <div class="score-value" id="level">1</div>
+            </div>
+            <div class="score-item">
+                <div>Nyawa</div>
+                <div class="score-value" id="lives">❤️❤️❤️</div>
+            </div>
+        </div>
+
+        <div class="customer-order">
+            <div class="order-title">🧑‍🍳 Pesanan Pelanggan</div>
+            <div class="order-details">
+                <div class="order-item">
+                    <strong>Rasa:</strong> <span id="order-flavor">Teh Tawar</span>
+                </div>
+                <div class="order-item">
+                    <strong>Topping:</strong> <span id="order-topping">Tanpa Topping</span>
+                </div>
+            </div>
+            <div class="timer-bar">
+                <div class="timer-fill" id="timer-fill"></div>
+            </div>
+        </div>
+
+        <div class="drink-display">
+            <div class="glass">
+                <div class="tea-liquid" id="tea-liquid"></div>
+                <div class="ice-cubes" id="ice-cubes">
+                    <div class="ice-cube"></div>
+                    <div class="ice-cube"></div>
+                    <div class="ice-cube"></div>
+                    <div class="ice-cube"></div>
+                </div>
+                <div class="toppings" id="toppings"></div>
+            </div>
+            <div><strong>Es Teh Anda</strong></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-title">🫖 Pilih Rasa</div>
+                <div class="control-buttons">
+                    <button class="control-btn" data-flavor="tawar">Teh Tawar</button>
+                    <button class="control-btn" data-flavor="manis">Teh Manis</button>
+                    <button class="control-btn" data-flavor="lemon">Lemon Tea</button>
+                    <button class="control-btn" data-flavor="susu">Teh Susu</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="control-title">🧁 Pilih Topping</div>
+                <div class="control-buttons">
+                    <button class="control-btn" data-topping="none">Tanpa Topping</button>
+                    <button class="control-btn" data-topping="boba">Boba</button>
+                    <button class="control-btn" data-topping="jelly">Jelly</button>
+                    <button class="control-btn" data-topping="pudding">Pudding</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" onclick="resetDrink()">🔄 Reset</button>
+            <button class="action-btn serve-btn" onclick="serveDrink()">🚀 Sajikan!</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="game-over" id="game-over">
+        <div class="game-over-content">
+            <h2>Game Over!</h2>
+            <div class="final-score" id="final-score">0</div>
+            <p>Terima kasih sudah bermain Es Teh Mania!</p>
+            <button class="play-again-btn" onclick="restartGame()">Main Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        class EstehGame {
+            constructor() {
+                this.score = 0;
+                this.level = 1;
+                this.lives = 3;
+                this.currentFlavor = 'tawar';
+                this.currentTopping = 'none';
+                this.currentOrder = {};
+                this.timeLeft = 30;
+                this.timerInterval = null;
+                this.isGameActive = true;
+
+                this.flavors = {
+                    'tawar': { name: 'Teh Tawar', color: '#8B4513' },
+                    'manis': { name: 'Teh Manis', color: '#D2691E' },
+                    'lemon': { name: 'Lemon Tea', color: '#DAA520' },
+                    'susu': { name: 'Teh Susu', color: '#DEB887' }
+                };
+
+                this.toppings = {
+                    'none': { name: 'Tanpa Topping', color: '' },
+                    'boba': { name: 'Boba', color: '#8B4513' },
+                    'jelly': { name: 'Jelly', color: '#32CD32' },
+                    'pudding': { name: 'Pudding', color: '#FFD700' }
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.generateNewOrder();
+                this.updateDisplay();
+                this.startTimer();
+            }
+
+            setupEventListeners() {
+                // Flavor buttons
+                document.querySelectorAll('[data-flavor]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.selectFlavor(e.target.dataset.flavor);
+                    });
+                });
+
+                // Topping buttons
+                document.querySelectorAll('[data-topping]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.selectTopping(e.target.dataset.topping);
+                    });
+                });
+            }
+
+            selectFlavor(flavor) {
+                if (!this.isGameActive) return;
+                
+                this.currentFlavor = flavor;
+                this.updateDrinkDisplay();
+                this.updateButtonStates();
+            }
+
+            selectTopping(topping) {
+                if (!this.isGameActive) return;
+                
+                this.currentTopping = topping;
+                this.updateDrinkDisplay();
+                this.updateButtonStates();
+            }
+
+            updateButtonStates() {
+                // Reset all buttons
+                document.querySelectorAll('.control-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+
+                // Highlight selected buttons
+                document.querySelector(`[data-flavor="${this.currentFlavor}"]`).classList.add('selected');
+                document.querySelector(`[data-topping="${this.currentTopping}"]`).classList.add('selected');
+            }
+
+            updateDrinkDisplay() {
+                const teaLiquid = document.getElementById('tea-liquid');
+                const toppingsContainer = document.getElementById('toppings');
+
+                // Define realistic tea colors and gradients
+                const teaStyles = {
+                    'tawar': {
+                        background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 30%, #8B4513 60%, #654321 100%)',
+                        shadow: 'inset 0 10px 20px rgba(255, 255, 255, 0.2), inset 0 -10px 20px rgba(0, 0, 0, 0.2)'
+                    },
+                    'manis': {
+                        background: 'linear-gradient(135deg, #D2691E 0%, #CD853F 30%, #D2691E 60%, #A0522D 100%)',
+                        shadow: 'inset 0 10px 20px rgba(255, 255, 255, 0.25), inset 0 -10px 20px rgba(0, 0, 0, 0.15)'
+                    },
+                    'lemon': {
+                        background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 30%, #DAA520 60%, #B8860B 100%)',
+                        shadow: 'inset 0 10px 20px rgba(255, 255, 255, 0.3), inset 0 -10px 20px rgba(0, 0, 0, 0.1)'
+                    },
+                    'susu': {
+                        background: 'linear-gradient(135deg, #DEB887 0%, #F5DEB3 30%, #DEB887 60%, #D2B48C 100%)',
+                        shadow: 'inset 0 10px 20px rgba(255, 255, 255, 0.4), inset 0 -10px 20px rgba(0, 0, 0, 0.05)'
+                    }
+                };
+
+                // Update tea color and style
+                const teaStyle = teaStyles[this.currentFlavor];
+                teaLiquid.style.background = teaStyle.background;
+                teaLiquid.style.boxShadow = teaStyle.shadow;
+
+                // Update toppings with realistic 3D effects
+                toppingsContainer.innerHTML = '';
+                if (this.currentTopping !== 'none') {
+                    const toppingCount = 6 + Math.floor(Math.random() * 4);
+                    for (let i = 0; i < toppingCount; i++) {
+                        const topping = document.createElement('div');
+                        topping.className = `topping ${this.currentTopping}`;
+                        topping.style.animationDelay = `${i * 0.15}s`;
+                        
+                        // Add random positioning for more natural look
+                        const randomX = -15 + Math.random() * 30;
+                        const randomY = -10 + Math.random() * 20;
+                        topping.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                        
+                        toppingsContainer.appendChild(topping);
+                    }
+                }
+            }
+
+            generateNewOrder() {
+                const flavorKeys = Object.keys(this.flavors);
+                const toppingKeys = Object.keys(this.toppings);
+
+                this.currentOrder = {
+                    flavor: flavorKeys[Math.floor(Math.random() * flavorKeys.length)],
+                    topping: toppingKeys[Math.floor(Math.random() * toppingKeys.length)]
+                };
+
+                // Update order display
+                document.getElementById('order-flavor').textContent = this.flavors[this.currentOrder.flavor].name;
+                document.getElementById('order-topping').textContent = this.toppings[this.currentOrder.topping].name;
+
+                // Reset timer
+                this.timeLeft = Math.max(20, 35 - this.level * 2);
+                this.startTimer();
+            }
+
+            startTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft -= 0.1;
+                    const percentage = (this.timeLeft / (35 - this.level * 2)) * 100;
+                    document.getElementById('timer-fill').style.width = `${Math.max(0, percentage)}%`;
+
+                    if (this.timeLeft <= 0) {
+                        this.timeUp();
+                    }
+                }, 100);
+            }
+
+            timeUp() {
+                clearInterval(this.timerInterval);
+                this.lives--;
+                this.showFeedback('⏰ Waktu Habis!', 'wrong');
+                this.updateDisplay();
+
+                if (this.lives <= 0) {
+                    this.gameOver();
+                } else {
+                    setTimeout(() => {
+                        this.generateNewOrder();
+                    }, 2000);
+                }
+            }
+
+            serveDrink() {
+                if (!this.isGameActive) return;
+
+                clearInterval(this.timerInterval);
+
+                const isFlavorCorrect = this.currentFlavor === this.currentOrder.flavor;
+                const isToppingCorrect = this.currentTopping === this.currentOrder.topping;
+
+                let points = 0;
+                let message = '';
+                let feedbackType = '';
+
+                if (isFlavorCorrect && isToppingCorrect) {
+                    points = 100 + (this.level * 10) + Math.floor(this.timeLeft * 2);
+                    message = '🎉 Sempurna! +' + points + ' poin';
+                    feedbackType = 'perfect';
+                } else if (isFlavorCorrect || isToppingCorrect) {
+                    points = 50 + (this.level * 5);
+                    message = '👍 Lumayan! +' + points + ' poin';
+                    feedbackType = 'good';
+                } else {
+                    this.lives--;
+                    message = '❌ Salah pesanan!';
+                    feedbackType = 'wrong';
+                }
+
+                this.score += points;
+                this.showFeedback(message, feedbackType);
+                this.updateDisplay();
+
+                // Level up every 500 points
+                const newLevel = Math.floor(this.score / 500) + 1;
+                if (newLevel > this.level) {
+                    this.level = newLevel;
+                    this.showFeedback(`🎊 Level ${this.level}!`, 'perfect');
+                }
+
+                if (this.lives <= 0) {
+                    this.gameOver();
+                } else {
+                    setTimeout(() => {
+                        this.generateNewOrder();
+                    }, 2000);
+                }
+            }
+
+            showFeedback(message, type) {
+                const feedback = document.getElementById('feedback');
+                feedback.textContent = message;
+                feedback.className = `feedback ${type} show`;
+
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 2000);
+            }
+
+            updateDisplay() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                
+                let heartsDisplay = '';
+                for (let i = 0; i < this.lives; i++) {
+                    heartsDisplay += '❤️';
+                }
+                for (let i = this.lives; i < 3; i++) {
+                    heartsDisplay += '🖤';
+                }
+                document.getElementById('lives').textContent = heartsDisplay;
+            }
+
+            gameOver() {
+                this.isGameActive = false;
+                clearInterval(this.timerInterval);
+                document.getElementById('final-score').textContent = this.score;
+                document.getElementById('game-over').style.display = 'flex';
+            }
+
+            restart() {
+                this.score = 0;
+                this.level = 1;
+                this.lives = 3;
+                this.currentFlavor = 'tawar';
+                this.currentTopping = 'none';
+                this.isGameActive = true;
+
+                document.getElementById('game-over').style.display = 'none';
+                this.generateNewOrder();
+                this.updateDisplay();
+                this.updateDrinkDisplay();
+                this.updateButtonStates();
+            }
+        }
+
+        // Initialize game
+        let game = new EstehGame();
+
+        // Global functions for buttons
+        function resetDrink() {
+            game.selectFlavor('tawar');
+            game.selectTopping('none');
+        }
+
+        function serveDrink() {
+            game.serveDrink();
+        }
+
+        function restartGame() {
+            game.restart();
+        }
+    </script>
+</body>
+</html>
